@@ -19,5 +19,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/notes', 'NotesController@index');
-Route::post('/notes', 'NotesController@store');
+Route::resource('notes', 'NotesController');
