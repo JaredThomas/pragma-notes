@@ -25,7 +25,7 @@ class ManageNotesTest extends TestCase
         $this->withoutExceptionHandling();
         $this->get('/notes/create')
             ->assertOk()
-            ->assertSee('Create a Note');
+            ->assertViewIs('notes.create');
     }
 
     /** @test **/

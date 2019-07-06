@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <h1>Notes</h1>
 
 <ul>
@@ -5,3 +8,4 @@
         <li>{{ $note->title }}</li>
     @endforeach
 </ul>
+@endsection
