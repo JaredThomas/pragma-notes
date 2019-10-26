@@ -7,5 +7,5 @@
         </div>
     @endif
 
-    You are logged in!
+    <a href="/notes">Notes</a>
 @endsection

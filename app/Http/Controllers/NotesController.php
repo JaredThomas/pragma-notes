@@ -41,6 +41,8 @@ class NotesController extends Controller
             'body'  => 'required'
         ]);
         Note::create($attributes);
+
+        return redirect( '/notes' );
     }
 
     /**
