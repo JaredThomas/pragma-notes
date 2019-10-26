@@ -34,9 +34,9 @@ class ManageNotesTest extends TestCase
         
         $note = factory(Note::class)->raw();
 
-        $this->post('/notes', $note);
+        $this->post('/notes', $note)
+            ->assertRedirect( '/notes' );
 
-        // and should exist in the database
         $this->assertDatabaseHas('notes', $note);
     }
 
