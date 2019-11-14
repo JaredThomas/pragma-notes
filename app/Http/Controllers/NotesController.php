@@ -96,7 +96,6 @@ class NotesController extends Controller
     public function destroy(Note $note)
     {
         $this->authorize('delete', $note);
-        // test commit
         $note->delete();
         return redirect('/notes');
     }
