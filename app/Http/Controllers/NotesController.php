@@ -14,7 +14,7 @@ class NotesController extends Controller
      */
     public function index()
     {
-        $notes = Note::all();
+        $notes = auth()->user()->notes;
         return view('notes.index', compact(['notes']));
     }
 
@@ -40,7 +40,7 @@ class NotesController extends Controller
             'title' => 'required',
             'body'  => 'required'
         ]);
-        Note::create($attributes);
+        auth()->user()->notes()->create($attributes);
 
         return redirect( '/notes' );
     }
@@ -53,6 +53,7 @@ class NotesController extends Controller
      */
     public function show(Note $note)
     {
+        $this->authorize('view', $note);
         return view('notes.show', compact('note'));
     }
 
@@ -64,6 +65,7 @@ class NotesController extends Controller
      */
     public function edit(Note $note)
     {
+        $this->authorize('update', $note);
         return view('notes.edit', compact(['note']));
     }
 
@@ -76,6 +78,7 @@ class NotesController extends Controller
      */
     public function update(Request $request, Note $note)
     {
+        $this->authorize('update', $note);
         $attributes = $request->validate([
             'title' => 'required',
             'body'  => 'required'
@@ -92,6 +95,7 @@ class NotesController extends Controller
      */
     public function destroy(Note $note)
     {
+        $this->authorize('delete', $note);
         $note->delete();
         return redirect('/notes');
     }
