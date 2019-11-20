@@ -7,19 +7,29 @@ use App\User;
 
 class NoteFactory
 {
-    protected $user;
+    protected $author;
+    protected $recipient;
 
-    public function ownedBy($user)
+    public function writtenBy($author)
     {
-        $this->user = $user;
+        $this->author = $author;
+        return $this;
+    }
+
+    public function writtenFor($recipient)
+    {
+        $this->recipient = $recipient;
         return $this;
     }
 
     public function create()
     {
         $note = factory(Note::class)->create([
-            'user_id' => $this->user ?? factory(User::class)
+            'user_id' => $this->author ?? factory(User::class)
         ]);
+
+        $note->recipients()
+            ->attach($this->recipient ?? factory(User::class)->create());
 
         return $note;
     }

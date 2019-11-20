@@ -14,7 +14,7 @@ class NotesController extends Controller
      */
     public function index()
     {
-        $notes = auth()->user()->notes;
+        $notes = auth()->user()->writtenNotes;
         return view('notes.index', compact(['notes']));
     }
 
@@ -40,7 +40,7 @@ class NotesController extends Controller
             'title' => 'required',
             'body'  => 'required'
         ]);
-        auth()->user()->notes()->create($attributes);
+        auth()->user()->writtenNotes()->create($attributes);
 
         return redirect( '/notes' );
     }

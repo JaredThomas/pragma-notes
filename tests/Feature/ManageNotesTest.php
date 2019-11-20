@@ -26,7 +26,7 @@ class ManageNotesTest extends TestCase
     public function another_user_cannot_access_a_note_they_did_not_author() {
         $tom = factory(User::class)->create();
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->actingAs($tom)
             ->get('/notes')
             ->assertDontSee($note->title);
@@ -45,7 +45,7 @@ class ManageNotesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $tom = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($tom)->create();
+        $note = NoteFactory::writtenBy($tom)->create();
 
         $this->actingAs($tom)
             ->post('/notes', $note->toArray())
@@ -84,7 +84,7 @@ class ManageNotesTest extends TestCase
     public function an_author_can_view_a_note()
     {
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->actingAs($sally)
             ->get("/notes/{$note->id}")
             ->assertOk()
@@ -96,7 +96,7 @@ class ManageNotesTest extends TestCase
     {
         $tom = factory(User::class)->create();
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->actingAs($tom)
             ->get("/notes/{$note->id}")
             ->assertForbidden();
@@ -106,7 +106,7 @@ class ManageNotesTest extends TestCase
     public function an_author_can_visit_the_page_to_edit_a_note()
     {
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->actingAs($sally)
             ->get("/notes/{$note->id}/edit")
             ->assertOk();
@@ -116,7 +116,7 @@ class ManageNotesTest extends TestCase
     public function any_other_user_cannot_visit_the_page_to_edit_a_note()
     {
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $tom = factory(User::class)->create();
         $this->actingAs($tom)
             ->get("/notes/{$note->id}/edit")
@@ -128,7 +128,7 @@ class ManageNotesTest extends TestCase
     {
         // Create our note and get it.
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
 
         // Update our note title
         $this->actingAs($sally)
@@ -151,7 +151,7 @@ class ManageNotesTest extends TestCase
         // Create our note and get it.
         $sally = factory(User::class)->create();
         $tom = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
 
         // Update our note title
         $this->actingAs($tom)
@@ -168,8 +168,9 @@ class ManageNotesTest extends TestCase
     /** @test **/
     public function a_note_can_be_deleted_by_the_author()
     {
+        $this->withoutExceptionHandling();
         $sally = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->assertDatabaseHas('notes', $note->toArray());
         $this->actingAs($sally)
             ->delete("/notes/{$note->id}")
@@ -182,7 +183,7 @@ class ManageNotesTest extends TestCase
     {
         $sally = factory(User::class)->create();
         $tom = factory(User::class)->create();
-        $note = NoteFactory::ownedBy($sally)->create();
+        $note = NoteFactory::writtenBy($sally)->create();
         $this->assertDatabaseHas('notes', $note->toArray());
         $this->actingAs($tom)
             ->delete("/notes/{$note->id}")
