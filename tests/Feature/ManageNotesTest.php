@@ -23,6 +23,20 @@ class ManageNotesTest extends TestCase
     }
 
     /** @test **/
+    public function a_logged_out_user_cannot_view_any_notes()
+    {
+        $this->get('/notes')
+            ->assertRedirect('/login');
+    }
+
+    /** @test **/
+    public function a_logged_out_user_cannot_create_a_note()
+    {
+        $this->get('/notes/create')
+            ->assertRedirect('/login');
+    }
+
+    /** @test **/
     public function another_user_cannot_access_a_note_they_did_not_author() {
         $tom = factory(User::class)->create();
         $sally = factory(User::class)->create();
@@ -33,9 +47,11 @@ class ManageNotesTest extends TestCase
     }
 
     /** @test **/
-    public function a_user_can_visit_the_page_to_create_a_note()
+    public function a_logged_in_user_can_visit_the_page_to_create_a_note()
     {
-        $this->get('/notes/create')
+        $tom = factory(User::class)->create();
+        $this->actingAs($tom)
+            ->get('/notes/create')
             ->assertOk()
             ->assertViewIs('notes.create');
     }
@@ -61,7 +77,9 @@ class ManageNotesTest extends TestCase
             'body' => 'Where is the title?'
         ];
 
-        $this->post('/notes', $note)
+        $tom = factory(User::class)->create();
+        $this->actingAs($tom)
+            ->post('/notes', $note)
             ->assertSessionHasErrors('title');
 
         $this->assertDatabaseMissing('notes', $note);
@@ -73,8 +91,10 @@ class ManageNotesTest extends TestCase
         $note = [
             'title' => 'No body?'
         ];
+        $tom = factory(User::class)->create();
 
-        $this->post('/notes', $note)
+        $this->actingAs($tom)
+            ->post('/notes', $note)
             ->assertSessionHasErrors('body');
 
         $this->assertDatabaseMissing('notes', $note);
