@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Notes</h1>
-<div>
-    <a href="/notes/create">Create a new note</a>
+<div class="flex items-center justify-between">
+    <h1 class="text-green-700 py-4 text-2xl">My Notes</h1>
+    <a href="/notes/create" class="underline text-blue-600 hover:text-blue-400">Create a new note</a>
 </div>
-<ul>
+<ul class="bg-white rounded shadow">
     @foreach($notes as $note)
-        <li>
-            <a href="/notes/{{ $note->id }}">{{ $note->title }}</a>
+        <li class="border-b border-gray-200">
+            <a href="/notes/{{ $note->id }}" class="p-4 w-full inline-block">{{ $note->title }}</a>
         </li>
     @endforeach
 </ul>

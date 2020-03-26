@@ -12,24 +12,30 @@
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
 
-<body>
-    <header>
-        @if (Route::has('login'))
-            <div class="top-right links">
-                @auth
-                    <a href="{{ url('/home') }}">Home</a>
-                @else
-                    <a href="{{ route('login') }}">Login</a>
+<body class="bg-gray-100">
+    <header class="py-4 bg-white">
+        <div class="container mx-auto">
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @auth
+                        <a href="{{ url('/notes') }}">Lifelong Notes</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <input type="submit" value="Logout" />
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
 
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}">Register</a>
-                    @endif
-                @endauth
-            </div>
-        @endif
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}">Register</a>
+                        @endif
+                    @endauth
+                </div>
+            @endif
+        </div>
     </header>
 
-    <main>
+    <main class="container mx-auto">
         @yield('content')
     </main>
 
