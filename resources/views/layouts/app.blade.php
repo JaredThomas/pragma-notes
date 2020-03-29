@@ -16,19 +16,21 @@
     <header class="py-4 bg-white">
         <div class="container mx-auto">
             @if (Route::has('login'))
-                <div class="top-right links">
+                <div class="links flex justify-between">
+                    <a href="{{ url('/notes') }}">Lifelong Notes</a>
                     @auth
-                        <a href="{{ url('/notes') }}">Lifelong Notes</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <input type="submit" value="Logout" />
                         </form>
                     @else
-                        <a href="{{ route('login') }}">Login</a>
+                        <div>
+                            <a href="{{ route('login') }}">Login</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}">| Register</a>
+                            @endif
+                        </div>
                     @endauth
                 </div>
             @endif
