@@ -6,13 +6,17 @@
 <form method="POST" action="{{ route('login') }}" class="bg-white rounded shadow p-4 w-full md:w-3/4 lg:w-1/2 mx-auto">
     @csrf
 
-    <label for="email" class="text-gray-800">{{ __('E-Mail Address') }}</label>
-    <input id="email" type="email" class="block mb-4 border p-2 border-gray-300 rounded w-full" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+    @component( 'components.label', ['for' => 'email'] )
+        {{ __('E-Mail Address') }}
+    @endcomponent
     @error('email')
-        <span role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
+        @component( 'components.input-error' )
+            {{ $message }}
+        @endcomponent
     @enderror
+    @component( 'components.input' )
+        id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
+    @endcomponent
 
     <label for="password" class="text-gray-800">{{ __('Password') }}</label>
     <input id="password" type="password" class="block mb-4 border p-2 border-gray-300 rounded w-full" name="password" required autocomplete="current-password">

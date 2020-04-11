@@ -1,0 +1,1 @@
+<input class="block mb-4 border p-2 border-gray-300 rounded w-full" {{ $slot }} />

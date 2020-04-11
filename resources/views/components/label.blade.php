@@ -1,0 +1,1 @@
+<label for="{{ $for }}" class="text-gray-800">{{ $slot }}</label>
