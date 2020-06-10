@@ -59,22 +59,31 @@ class ManageNotesTest extends TestCase
     /** @test **/
     public function a_note_can_be_created()
     {
-        $this->withoutExceptionHandling();
         $tom = factory(User::class)->create();
-        $note = NoteFactory::writtenBy($tom)->create();
+        $sally = factory(User::class)->create();
+        $noteContent = [
+            'title' => 'Hey',
+            'body' => 'Checking to see how you are doing',
+        ];
+        $noteRecipient = [
+            'recipient' => $sally->id
+        ];
 
         $this->actingAs($tom)
-            ->post('/notes', $note->toArray())
+            ->post('/notes', array_merge($noteContent, $noteRecipient))
             ->assertRedirect( '/notes' );
 
-        $this->assertDatabaseHas('notes', $note->toArray());
+        $this->assertDatabaseHas('notes', $noteContent);
+        $note = Note::where('title', $noteContent['title'])->first();
+        $this->assertEquals( $note->recipient()->id, $sally->id );
     }
 
     /** @test **/
     public function a_note_without_a_title_is_not_allowed()
     {
         $note = [
-            'body' => 'Where is the title?'
+            'body' => 'Where is the title?',
+            'recipient' => 1
         ];
 
         $tom = factory(User::class)->create();
@@ -89,7 +98,8 @@ class ManageNotesTest extends TestCase
     public function a_note_without_a_body_is_not_allowed()
     {
         $note = [
-            'title' => 'No body?'
+            'title' => 'No body?',
+            'recipient' => 1
         ];
         $tom = factory(User::class)->create();
 
@@ -101,11 +111,36 @@ class ManageNotesTest extends TestCase
     }
 
     /** @test **/
-    public function an_author_can_view_a_note()
+    public function a_note_without_a_recipient_is_not_allowed()
+    {
+        $note = [
+            'title' => 'Happy',
+            'body' => 'Glad you are doing well!'
+        ];
+        $sally = factory(User::class)->create();
+        $this->actingAs($sally)
+            ->post('/notes', $note)
+            ->assertSessionHasErrors('recipient');
+        $this->assertDatabaseMissing('notes', $note);
+    }
+
+    /** @test **/
+    public function an_author_and_recipient_can_view_a_note()
     {
         $sally = factory(User::class)->create();
-        $note = NoteFactory::writtenBy($sally)->create();
+        $tom = factory(User::class)->create();
+        $note = NoteFactory::writtenBy($sally)
+            ->writtenFor($tom)
+            ->create();
+
+        // author
         $this->actingAs($sally)
+            ->get("/notes/{$note->id}")
+            ->assertOk()
+            ->assertSee($note->title);
+
+        // recipient
+        $this->actingAs($tom)
             ->get("/notes/{$note->id}")
             ->assertOk()
             ->assertSee($note->title);
@@ -136,9 +171,19 @@ class ManageNotesTest extends TestCase
     public function any_other_user_cannot_visit_the_page_to_edit_a_note()
     {
         $sally = factory(User::class)->create();
-        $note = NoteFactory::writtenBy($sally)->create();
         $tom = factory(User::class)->create();
+        $sara = factory(User::class)->create();
+        $note = NoteFactory::writtenBy($sally)
+            ->writtenFor($tom)
+            ->create();
+
+        // recipient
         $this->actingAs($tom)
+            ->get("/notes/{$note->id}/edit")
+            ->assertForbidden();
+
+        // not an author or recipient
+        $this->actingAs($sara)
             ->get("/notes/{$note->id}/edit")
             ->assertForbidden();
     }
@@ -188,7 +233,6 @@ class ManageNotesTest extends TestCase
     /** @test **/
     public function a_note_can_be_deleted_by_the_author()
     {
-        $this->withoutExceptionHandling();
         $sally = factory(User::class)->create();
         $note = NoteFactory::writtenBy($sally)->create();
         $this->assertDatabaseHas('notes', $note->toArray());

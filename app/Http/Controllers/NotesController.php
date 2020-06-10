@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Note;
+use App\User;
 use Illuminate\Http\Request;
 
 class NotesController extends Controller
@@ -14,8 +15,9 @@ class NotesController extends Controller
      */
     public function index()
     {
-        $notes = auth()->user()->writtenNotes;
-        return view('notes.index', compact(['notes']));
+        $receivedNotes = auth()->user()->receivedNotes;
+        $writtenNotes = auth()->user()->writtenNotes;
+        return view('notes.index', compact(['receivedNotes', 'writtenNotes']));
     }
 
     /**
@@ -25,7 +27,8 @@ class NotesController extends Controller
      */
     public function create()
     {
-        return view('notes.create');
+        $users = User::where( 'id', '<>', auth()->user()->id )->get();
+        return view('notes.create', compact(['users']));
     }
 
     /**
@@ -38,9 +41,14 @@ class NotesController extends Controller
     {
         $attributes = $request->validate([
             'title' => 'required',
-            'body'  => 'required'
+            'body'  => 'required',
+            'recipient' => 'required',
         ]);
-        auth()->user()->writtenNotes()->create($attributes);
+        auth()->user()
+            ->writtenNotes()
+            ->create($attributes)
+            ->recipients()
+            ->attach( $attributes['recipient'] );
 
         return redirect( '/notes' );
     }

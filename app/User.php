@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function receivedNotes()
     {
-        return $this->belongsToMany( Note::class, 'note_user', 'note_id', 'user_id' );
+        return $this->belongsToMany( Note::class, 'note_user', 'user_id', 'note_id' );
     }
 }

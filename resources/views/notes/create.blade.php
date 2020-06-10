@@ -5,6 +5,13 @@
 
 <form action="/notes" method="POST" class="bg-white rounded p-4 shadow">
     @csrf
+    <label for="recipient">Recipient</label>
+    <select name="recipient">
+        @foreach( $users as $user )
+            <option value="{{ $user->id }}">{{ $user->name }}</option>
+        @endforeach
+    </select>
+
     <div>
         <label for="title" class="text-gray-800">Title</label>
         <input type="text" id="title" name="title" class="block mb-4 border p-2 border-gray-300 rounded w-full" required />

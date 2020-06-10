@@ -19,7 +19,8 @@ class NotePolicy
      */
     public function view(User $user, Note $note)
     {
-        return $note->author->id === $user->id;
+        return $note->author->id === $user->id ||
+            $note->recipient()->id === $user->id;
     }
 
     /**
