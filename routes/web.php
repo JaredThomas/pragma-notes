@@ -17,7 +17,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
+// Temporarily disable registration.
+Route::get('/register', 'HomeController@index')->name('home');
+Route::post('/register', 'HomeController@index')->name('home');
+
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::resource('groups', 'GroupsController');
     Route::resource('notes', 'NotesController');
 });
