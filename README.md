@@ -1,0 +1,3 @@
+# Lifelong Notes (formerly Pragma Notes)
+
+This is a basic private note sharing app to get a better handle on writing backend tests in Laravel with a JS-less light front end. I used a few approaches learned from Laracasts as well as the [class based model factories](https://tighten.co/blog/tidy-up-your-tests-with-class-based-model-factories/) from Tighten. I believe this is now built into v8.x of Laravel, and might want to revisit it if development on this continues. For now, it was just a fun small side project to learn more about testing outside of the front-end where most of my testing experience lies. I also took advantage of other built in Laravel features like gates and policies for authorization.
